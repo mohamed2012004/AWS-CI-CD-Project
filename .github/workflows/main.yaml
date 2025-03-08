@@ -33,13 +33,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Cleanup disk space
-        run: |
-          sudo apt-get clean
-          sudo apt-get autoremove -y
-          sudo docker system prune -af
-          df -h
-
       - name: Install Utilities
         run: |
           sudo apt-get update
@@ -85,6 +78,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Cleanup disk space
+        run: |
+          docker system prune -af
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+      
       - name: Pull latest images 
         run: | 
           docker pull ${{secrets.AWS_ECR_LOGIN_URI}}:latest
